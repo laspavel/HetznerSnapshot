@@ -3,13 +3,13 @@
 Create Hetzner snapshot
 
 **Requirements:**
-* python3 and python3-pip
+* python3
 
 **Configuration:**
 
 Update script parameters:
 * alarm_telegram_id - telegram id for send creating snapshot status.
-* telegram_token - 
+* telegram_token - telegrambot token
 * api_timeout - API Hetzner timeout (sec)
 * api_token - Hetzner API token ([See documentation](https://docs.hetzner.com/cloud/api/getting-started/generating-api-token/))
 * server_name - ServerName for backup
