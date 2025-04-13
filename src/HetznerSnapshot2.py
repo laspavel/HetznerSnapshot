@@ -86,22 +86,25 @@ def main():
         logging.info(f"Starting backup for server: {SERVER_NAME}")
 
         server_id = get_server_id(SERVER_NAME)
+        logging.info(f"Server ID: {server_id}")
 
         # Удаляем предыдущие снапшоты с этим префиксом
-        for snapshot in list_snapshots():
+        snapshots = list_snapshots()
+        logging.info(f"list snapshots: {list_snapshots}")
+        for snapshot in snapshots:
             if snapshot['description'].startswith(SNAPSHOT_PREFIX) and snapshot['status'] == 'available':
+                logging.info(f"Delete snapshot: {snapshot['id']}")
                 delete_snapshot(snapshot['id'])
 
         # Создаём новый снапшот
+        logging.info(f"Create snapshot: {snapshot_name}")
         create_snapshot(server_id, snapshot_name)
 
         # Ждём его готовности
         if not wait_for_snapshot(snapshot_name):
             raise RuntimeError(f"Snapshot not available after {BACKUP_TIMEOUT} seconds")
 
-        msg = f"✅ Hetzner snapshot created: {snapshot_name}"
-        logging.info(msg)
-        send_telegram_message(msg)
+        logging.info(f"✅ Hetzner snapshot created: {snapshot_name}")
 
     except Exception as e:
         error_msg = f"❌ Backup failed: {e}\n{traceback.format_exc()}"

@@ -3,11 +3,8 @@ FROM oraclelinux:7.3
 WORKDIR /src
 
 RUN yum install -y python3 python3-pip gcc python3-devel zlib-devel && pip3 install wheel && pip3 install pyinstaller
-
-ARG AGVERSION
-ENV AGVERSION=$AGVERSION
+COPY requirements1.txt ./
+RUN pip3 install --no-cache-dir -r requirements1.txt
 
 COPY /src /src
-RUN sed -i "s|PRG_VERSION_GIT_UID_TAG|$AGVERSION|g" /src/cpu_load.py
-
-CMD ["pyinstaller", "--onefile", "--exclude-module","lzma", "--clean", "--distpath", "/dist","cpu_load.py"]
+CMD ["pyinstaller", "--onefile", "--exclude-module","lzma", "--clean", "--distpath", "/dist","HetznerSnapshot2.py"]
