@@ -1,21 +1,17 @@
 # HetznerSnapshot – Automated Snapshot Creation for Hetzner Cloud
 
-HetznerSnapshot is a lightweight Python script designed to automate the creation of snapshots for Hetzner Cloud servers. It integrates with Telegram to provide real-time notifications about the snapshot creation status.​
+A Python-based utility to automate the creation and deletion of snapshots for Hetzner Cloud servers using the Hetzner API. This tool facilitates regular backups and integrates with Telegram for notifications.
 
 ## 📌 Features
 
-* Automated snapshot creation for specified Hetzner Cloud servers​
-* Customizable snapshot naming with timestamp support​
-* Configurable API and backup timeouts​
-* Telegram integration for status notifications​
-* Suitable for scheduling via cron for regular backups​
-* SimpleBackups Help Center
+* **Snapshot Creation**: Automatically create snapshots of specified Hetzner Cloud servers.
+* **Snapshot Deletion**: Remove old snapshots matching a defined naming pattern.
+* **Telegram Notifications**: Receive real-time updates on snapshot operations via Telegram.
 
 ## ⚙️ Requirements
 
-* Python 3.x​
-* Hetzner Cloud API token with appropriate permissions​
-* Telegram bot token and chat ID (for notifications)​
+* Python 3.6+: Ensure Python is installed on your system.
+* Docker: Required for building the standalone binary.
 
 ## 🚀 Installation
 
@@ -26,24 +22,40 @@ git clone https://github.com/laspavel/HetznerSnapshot.git
 cd HetznerSnapshot
 ```
 
-2) Install dependencies:​
-The script uses standard Python libraries. If any additional packages are required, install them using:
+2) Build the Binary Using Docker: 
 
 ```bash
-pip install -r requirements.txt
+docker build --no-cache --file Dockerfile.build --tag hetznersnapshot2_build .
+docker run --rm -v $(pwd):/dist hetznersnapshot2_build
+chmod +x HetznerSnapshot2
 ```
+
+This process will generate a standalone binary named HetznerSnapshot.bin in the project directory.
 
 ## 🛠️ Configuration
 
-Before running the script, update the following parameters in HetznerSnapshot1.py:​
+Configure the application using a .env file. An example configuration is provided in .env.example:
 
-* alarm_telegram_id: Telegram chat ID to receive notifications​
-* telegram_token: Token for your Telegram bot​
-* api_timeout: Timeout for Hetzner API requests (in seconds)​
-* api_token: Your Hetzner Cloud API token​
-* server_name: Name of the Hetzner server to snapshot​
-* backup_timeout: Time to wait before checking snapshot status (in seconds)​
-* snapshot_templ_name: Template for naming snapshots (e.g., server1_autobackup_ will result in names like server1_autobackup_2024-01-02 09:20:41.634323)​
+```ini
+# Hetzner API token
+HETZNER_API_TOKEN=your_hetzner_api_token
+
+# Telegram bot token
+TELEGRAM_TOKEN=your_telegram_bot_token
+
+# Telegram chat ID for notifications
+TELEGRAM_CHAT_ID=your_telegram_chat_id
+
+# Name of the server to snapshot
+SERVER_NAME=your_server_name
+
+# Snapshot name prefix
+SNAPSHOT_PREFIX=your_snapshot_prefix_
+
+# Timeout for snapshot creation in seconds
+BACKUP_TIMEOUT=1200
+```
+Rename .env.example to .env and replace the placeholder values with your actual credentials and preferences.
 
 ## 🧪 Usage
 
@@ -51,18 +63,30 @@ Before running the script, update the following parameters in HetznerSnapshot1.p
 Run the script directly from the terminal:​
 
 ```bash
-python3 HetznerSnapshot1.py
-Scheduled Execution with Cron
+./HetznerSnapshot.bin
 ```
+
+Ensure that the .env file is present in the same directory as the binary.
+
 
 ### Scheduled Execution with Cron
-To automate snapshot creation, add a cron job. For example, to run the script every Monday at 4:45 AM:​
+
+1) Automate the snapshot process by scheduling it with cron:
+
+Open the crontab editor:
 
 ```bash
-45 4 * * 1 cd /path/to/HetznerSnapshot && python3 HetznerSnapshot1.py
+crontab -e
+```
+2) Add the following line to schedule the script (e.g., daily at 2 AM):
+
+```
+0 2 * * * /path/to/HetznerSnapshot/HetznerSnapshot2
 ```
 
-Replace ```/path/to/HetznerSnapshot``` with the actual path to the script directory.​
+Replace /path/to/HetznerSnapshot/ with the actual path to your project directory.
+
+This setup will run the snapshot script daily at 2 AM, logging output to /var/log/HetznerSnapshot2.log.
 
 ## 📄 License
 
